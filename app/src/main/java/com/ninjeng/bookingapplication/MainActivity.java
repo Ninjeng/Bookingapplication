@@ -96,19 +96,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if(autoRoom.getSelectedItem().toString()=="Deluxe") {
                          int price = 2000;
                          int total = difference*price*room;
-                         tvResult.setText("The total cost is: "+total);
+                         int vat = 13/100*total;
+                         int grandtotal=total+vat;
+                         tvResult.setText("The total cost of room are: "+total+ "with vat "+vat+" and the grand total is"+grandtotal);
                     }
                     else if(autoRoom.getSelectedItem().toString()=="Platinum")
                     {
                         int price = 4000;
                         int total = difference*price*room;
-                        tvResult.setText("The total cost is: "+total);
-                    }
+                        int vat = 13/100*total;
+                        total=total+vat;
+                        int grandtotal=total+vat;
+                        tvResult.setText("The total cost of room are: "+total+ "with vat "+vat+" and the grand total is"+grandtotal);                    }
                     else if(autoRoom.getSelectedItem().toString()=="Presidential")
                     {
                         int price =7000;
-                        int total = difference*price*room;
-                        tvResult.setText("The total cost is: "+total);
+                        float total = difference*price*room;
+                        float vat = 0.13f*total;
+                        total=total+vat;
+                        float grandtotal=total+vat;
+                        tvResult.setText("The total cost of room are: "+total+ "with vat "+vat+" and the grand total is"+grandtotal);
                     }
                 }
                 else {
