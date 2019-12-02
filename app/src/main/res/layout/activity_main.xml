@@ -15,11 +15,13 @@
     <EditText
         android:id="@+id/etCheckIn"
         android:hint="Select CheckIn date"
+        android:inputType="date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <EditText
         android:id="@+id/etCheckOut"
         android:hint="Select Checkout date"
+        android:inputType="date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <TextView
@@ -67,17 +69,20 @@
         android:layout_height="wrap_content">
         <EditText
             android:id="@+id/etAdults"
+            android:inputType="number"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <EditText
             android:id="@+id/etChildren"
             android:layout_weight="1"
+            android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <EditText
             android:id="@+id/etRoom"
             android:layout_weight="1"
+            android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

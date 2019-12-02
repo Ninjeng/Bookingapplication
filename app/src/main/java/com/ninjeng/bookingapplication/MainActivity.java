@@ -3,13 +3,11 @@ package com.ninjeng.bookingapplication;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -17,13 +15,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Period;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -48,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         autoRoom=findViewById(R.id.SpinnerRoom);
         btnCalculate=findViewById(R.id.btnCalculate);
         tvResult=findViewById(R.id.tvResult);
-        String Rooms[] ={"Deluxe","Platinum","Presidential"};
+        String Rooms[] ={"Deluxe Rs-2000","Platinum Rs-4000","Presidential Rs-7000"};
         ArrayAdapter Spinneradapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,Rooms);
         String Country[] = {"Nepal","Afghanistan","Argentina","India","China","Spain","USA","Canada","Australia","England","New zealand","Poland","Germany","Chili"};
         ArrayAdapter autoTextadapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,Country);
@@ -82,49 +75,77 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             case R.id.btnCalculate:
             {
-                Validation();
-                String checkIn = etCheckIn.getText().toString();
-                String checkOut = etCheckOut.getText().toString();
-                String arrcheckIn[] = checkIn.split("/",3 );
-                String arrcheckOut[] = checkOut.split("/",3 );
-                int checkday=Integer.parseInt(arrcheckIn[1]);
-                int checkoutday=Integer.parseInt(arrcheckOut[1]);
-                if(checkoutday>checkday)
-                {
-                    int difference =Integer.parseInt(arrcheckOut[1])-Integer.parseInt(arrcheckIn[1]);
-                    int room = Integer.parseInt(etRoom.getText().toString());
-                    if(autoRoom.getSelectedItem().toString()=="Deluxe") {
-                         int price = 2000;
-                         int total = difference*price*room;
-                         int vat = 13/100*total;
-                         int grandtotal=total+vat;
-                         tvResult.setText("The total cost of room are: "+total+ "with vat "+vat+" and the grand total is"+grandtotal);
-                    }
-                    else if(autoRoom.getSelectedItem().toString()=="Platinum")
-                    {
-                        int price = 4000;
-                        int total = difference*price*room;
-                        int vat = 13/100*total;
-                        total=total+vat;
-                        int grandtotal=total+vat;
-                        tvResult.setText("The total cost of room are: "+total+ "with vat "+vat+" and the grand total is"+grandtotal);                    }
-                    else if(autoRoom.getSelectedItem().toString()=="Presidential")
-                    {
-                        int price =7000;
-                        float total = difference*price*room;
-                        float vat = 0.13f*total;
-                        total=total+vat;
-                        float grandtotal=total+vat;
-                        tvResult.setText("The total cost of room are: "+total+ "with vat "+vat+" and the grand total is"+grandtotal);
-                    }
+                if(TextUtils.isEmpty(etCheckIn.getText().toString())){
+                    etCheckIn.setError("Choose a date for check in");
+                    etCheckIn.requestFocus();
                 }
-                else {
-                    etCheckOut.setError("Please select a valid date to check out");
+                else if(TextUtils.isEmpty(etCheckOut.getText().toString())){
+                    etCheckOut.setError("Choose a date for check out");
+                    etCheckOut.requestFocus();
+                }
+                else if(TextUtils.isEmpty(countryAuto.getText().toString())){
+                    countryAuto.setError("Select a room");
+                    countryAuto.requestFocus();
+                }
+                else if(TextUtils.isEmpty(etAdults.getText().toString())){
+                    etAdults.setError("Enter how many number of Adults are staying ");
+                    etAdults.requestFocus();
+
                 }
 
+                else if(TextUtils.isEmpty(etChildren.getText().toString())){
+                    etChildren.setError("Enter how many number of Children are staying ");
+                    etChildren.requestFocus();
+                }
+
+                else if(TextUtils.isEmpty(etRoom.getText().toString())){
+                    etRoom.setError("Enter number of rooms");
+                    etRoom.requestFocus();
+                }
+                else
+                {
+                    String checkIn = etCheckIn.getText().toString();
+                    String checkOut = etCheckOut.getText().toString();
+                    String arrcheckIn[] = checkIn.split("/",3 );
+                    String arrcheckOut[] = checkOut.split("/",3 );
+                    int checkday=Integer.parseInt(arrcheckIn[1]);
+                    int checkoutday=Integer.parseInt(arrcheckOut[1]);
+                    if(checkoutday>checkday)
+                    {
+                        int difference =Integer.parseInt(arrcheckOut[1])-Integer.parseInt(arrcheckIn[1]);
+                        int room = Integer.parseInt(etRoom.getText().toString());
+                        if(autoRoom.getSelectedItem().toString()=="Deluxe Rs-2000") {
+                            float[] result=Calculate(2000,difference,room);
+                            tvResult.setText("Total: Rs." + result[0]+"\n"+"Vat Rs.:"+result[1]+"\n"+"Gross Total: Rs."+result[2]);
+                        }
+                        else if(autoRoom.getSelectedItem().toString()=="Platinum Rs-4000")
+                        {
+                            float[] result=Calculate(4000,difference,room);
+                            tvResult.setText("Total: Rs." + result[0]+"\n"+"Vat Rs.:"+result[1]+"\n"+"Gross Total: Rs."+result[2]);
+                        }
+                        else if(autoRoom.getSelectedItem().toString()=="Presidential Rs-7000")
+                        {
+                            float[] result=Calculate(7000,difference,room);
+                            tvResult.setText("Total: Rs." + result[0]+"\n"+"Vat Rs.:"+result[1]+"\n"+"Gross Total: Rs."+result[2]);
+
+                        }
+                    }
+                    else {
+                        etCheckOut.setError("Please select a valid date to check out");
+                    }
+                }
+
+                break;
 
             }
         }
+    }
+    private float[] Calculate(int price,int difference,int room)
+    {
+        float total =difference*price*room;
+        float vat =0.13f*total;
+        float grandTotal =total+vat;
+        return new float[]{total,vat,grandTotal};
     }
     private void DataLoader(View v )
     {
@@ -162,43 +183,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 datePickerDialog.show();
                 break;
             }
-        }
-
-
-    }
-    private void Validation ()
-    {
-        if(TextUtils.isEmpty(etCheckIn.getText().toString())){
-            etCheckIn.setError("Choose a date for check in");
-            etCheckIn.requestFocus();
-            return;
-        }
-        else if(TextUtils.isEmpty(etCheckOut.getText().toString())){
-            etCheckOut.setError("Choose a date for check out");
-            etCheckOut.requestFocus();
-            return;
-        }
-        else if(TextUtils.isEmpty(countryAuto.getText().toString())){
-            countryAuto.setError("Select a room");
-            countryAuto.requestFocus();
-            return;
-        }
-        else if(TextUtils.isEmpty(etAdults.getText().toString())){
-            etAdults.setError("Enter how many number of Adults are staying ");
-            etAdults.requestFocus();
-            return;
-        }
-
-        else if(TextUtils.isEmpty(etChildren.getText().toString())){
-            etChildren.setError("Enter how many number of Children are staying ");
-            etChildren.requestFocus();
-            return;
-        }
-
-        else if(TextUtils.isEmpty(etRoom.getText().toString())){
-            etRoom.setError("Enter number of rooms");
-            etRoom.requestFocus();
-            return;
         }
 
 
